@@ -125,7 +125,42 @@ render_header($pageTitle, $currentUser, $item['description']);
 
   <?php if ($adminView): ?>
     <a class="button block" href="item_edit.php?id=<?= (int) $item['id'] ?>">Edit item</a>
+    <a class="button block button-secondary" href="ledger.php?item_q=<?= e((string) $item['public_id']) ?>">Ledger for this item</a>
   <?php endif; ?>
   <a class="button block button-secondary" href="search.php">Back to search</a>
 </section>
+
+<?php
+$history = Ledger::forItem($pdo, (int) $item['id'], 25);
+?>
+<section class="card">
+  <h2>History</h2>
+  <?php if (!$history): ?>
+    <p class="note">No ledger events yet.</p>
+  <?php else: ?>
+    <ul class="plain-list">
+      <?php foreach ($history as $row): ?>
+        <li>
+          <div>
+            <strong><?= e(Ledger::eventLabel((string) $row['event_type'])) ?></strong>
+            <div class="note"><?= e($row['created_at']) ?></div>
+            <div class="note">
+              <?php if (!empty($row['actor_callsign'])): ?>Actor <?= e($row['actor_callsign']) ?><?php endif; ?>
+              <?php if (!empty($row['witness_callsign'])): ?>
+                · Witness <?= e($row['witness_callsign']) ?>
+              <?php endif; ?>
+            </div>
+            <?php
+              $summary = Ledger::detailsSummary($row['details_json'] ?? null);
+              if ($summary !== ''):
+            ?>
+              <div class="note"><?= e($summary) ?></div>
+            <?php endif; ?>
+          </div>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+  <?php endif; ?>
+</section>
 <?php render_footer(); ?>
+

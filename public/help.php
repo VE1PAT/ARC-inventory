@@ -61,6 +61,7 @@ render_header($pageTitle, $currentUser);
     <li><strong>Members</strong> — create logins (callsign only), set roles, deactivate, unlock.</li>
     <li><strong>Import</strong> — download CSV template, bulk-add items (LibreOffice-friendly).</li>
     <li><strong>Reports</strong> — on-loan list, aging, sold/disposed, and a large AGM/monthly summary.</li>
+    <li><strong>Ledger</strong> — append-only accountability log (filter by event, callsign, item, dates; CSV download).</li>
   </ul>
 </section>
 <?php endif; ?>

@@ -52,6 +52,7 @@ render_header($pageTitle, $currentUser, 'Home');
       <li><a class="button block" href="import.php">CSV import</a></li>
       <li><a class="button block" href="members.php">Members</a></li>
       <li><a class="button block" href="reports.php">Reports</a></li>
+      <li><a class="button block" href="ledger.php">Ledger</a></li>
       <li><a class="button block" href="alerts.php">Security alerts<?php if ($unread > 0): ?> · <?= (int) $unread ?> new<?php endif; ?></a></li>
     <?php endif; ?>
   </ul>
