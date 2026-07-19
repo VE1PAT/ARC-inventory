@@ -20,6 +20,21 @@ render_header($pageTitle, $currentUser);
 </section>
 
 <section class="card">
+  <h2>Search</h2>
+  <p>Use one keyword box on Home or Search. It looks across system ID, club ID, description, manufacturer, model, serial, location, notes, source, and current borrower callsign.</p>
+</section>
+
+<section class="card">
+  <h2>Not for loan</h2>
+  <p>Some gear is inventoried but never loaned (repeaters, tower sections, club servers). Admins mark these <strong>Not for loan</strong>. You can still view them.</p>
+</section>
+
+<section class="card">
+  <h2>Kits / Go-Kits</h2>
+  <p>A kit has an includes list. When loan/return is enabled, you must confirm every included item is present before the transaction can finish.</p>
+</section>
+
+<section class="card">
   <h2>Loans and Witness</h2>
   <p>When loan and return screens are ready, a second club member (the <strong>Witness</strong>) must confirm on the same device, or remotely in the app within 48 hours.</p>
 </section>

@@ -41,10 +41,12 @@ if (!empty($currentUser) && Auth::isAdminPlus($currentUser)) {
     <?php if (!empty($currentUser)): ?>
       <nav class="wrap nav">
         <a href="home.php">Home</a>
-        <a href="help.php">Help</a>
+        <a href="search.php">Search</a>
         <?php if (Auth::isAdminPlus($currentUser)): ?>
+          <a href="item_edit.php">Add</a>
           <a href="alerts.php">Alerts<?php if ($alertCount > 0): ?> (<?= (int) $alertCount ?>)<?php endif; ?></a>
         <?php endif; ?>
+        <a href="help.php">Help</a>
         <a href="logout.php">Log out</a>
       </nav>
     <?php endif; ?>
