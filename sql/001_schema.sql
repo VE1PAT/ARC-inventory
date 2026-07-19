@@ -118,4 +118,11 @@ CREATE TABLE IF NOT EXISTS security_alerts (
   KEY idx_alerts_unread (is_read, created_at)
 ) ENGINE=InnoDB;
 
--- Create the first superuser with public/setup_superuser.php after import.
+-- Per-install club branding / URLs (filled by public/install.php)
+CREATE TABLE IF NOT EXISTS settings (
+  setting_key VARCHAR(64) NOT NULL PRIMARY KEY,
+  setting_value TEXT NOT NULL,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- Complete first-time setup at public/install.php after import.

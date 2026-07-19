@@ -57,9 +57,13 @@ main.wrap {
 }
 
 .card h2 {
-  margin: 0 0 0.6rem;
+  margin: 1.25rem 0 0.6rem;
   font-size: 1.15rem;
   color: var(--accent);
+}
+
+.card h2:first-child {
+  margin-top: 0;
 }
 
 .ok { color: var(--ok); font-weight: 600; }

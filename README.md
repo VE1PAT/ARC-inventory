@@ -1,27 +1,36 @@
 # ARC Inventory
 
-Amateur Radio Club inventory system for [halifax-arc.org](https://halifax-arc.org).  
-Callsign login, witness-based loans, kits, photos, CSV import, and admin reports.
+Open-source **amateur radio club inventory** system.
 
-**Repo:** https://github.com/VE1PAT/ARC-inventory  
-**Design:** open `design-spec.html` in a browser.
+Track club assets (radios, kits, books, station gear, and more), loan items to members with a second-member **Witness**, keep an append-only ledger, and run simple admin reports. Built to be simple on phones and desktops.
+
+Each club runs **its own install** (own database and config). The same codebase can power multiple clubs — for example one instance for Halifax and another for Dartmouth.
+
+**Repository:** https://github.com/VE1PAT/ARC-inventory  
+**Design notes:** open `design-spec.html` in a browser.
+
+## Features (target)
+
+- Callsign + password login (no personal membership data stored here)
+- Roles: Member, Admin, Superuser (multiple superusers supported)
+- Hybrid loan verification (same-device witness primary; remote pending expires in 48 hours)
+- Kits / Go-Kits with include checklist confirmation
+- Optional photos, CSV import/export, admin reports
+- Sold/disposed tracking without money fields
+- Items marked **Not for loan** for fixed station gear
 
 ## Stack
 
 - PHP 8.x
-- MySQL / MariaDB
-- Local: Windows 11 + XAMPP
-- Production: Linux (same codebase)
+- MySQL or MariaDB
+- Local development: Windows + XAMPP (or any PHP/MySQL stack)
+- Production: Linux hosting (same codebase)
 
 ---
 
-## One-time setup on your laptop (run these yourself)
+## One-time setup (laptop with XAMPP)
 
-Open **PowerShell**. Commands below assume:
-
-- Project folder: `C:\Users\home\Projects\Amateur Radio Inventory`
-- XAMPP installed at `C:\xampp`
-- Apache and MySQL already started in the XAMPP Control Panel
+Adjust paths if your project folder or XAMPP location differs.
 
 ### 1) Copy local config
 
@@ -31,140 +40,93 @@ copy config\config.example.php config\config.php
 notepad config\config.php
 ```
 
-In `config.php`, confirm at least:
+Set database credentials for your machine. Typical XAMPP defaults:
 
-- `base_url` → `http://localhost/arc-inventory/public`
-- `db.user` → `root`
-- `db.pass` → `` (empty is normal for XAMPP unless you set a password)
-- `db.name` → `arc_inventory`
+- `db.host` = `127.0.0.1`
+- `db.name` = `arc_inventory`
+- `db.user` = `root`
+- `db.pass` = `` (empty unless you set a MySQL password)
+- `base_url` = `http://localhost/arc-inventory/public`
 
-Save and close Notepad.
+Club display name is **not** set in this file — it is collected in the first-time web setup.
 
-### 2) Point XAMPP at this project (junction)
-
-This makes `http://localhost/arc-inventory/` serve your project folder without moving files into `htdocs`.
+### 2) Point Apache at this project (optional junction)
 
 ```powershell
-# Run PowerShell as your normal user (Admin usually not required for htdocs)
 cmd /c mklink /J "C:\xampp\htdocs\arc-inventory" "C:\Users\home\Projects\Amateur Radio Inventory"
-```
-
-Check it worked:
-
-```powershell
 dir C:\xampp\htdocs\arc-inventory
 ```
 
-You should see `public`, `config`, `sql`, etc.
-
 ### 3) Create the database
 
-**Option A — phpMyAdmin (easiest)**
+**phpMyAdmin:** Import `sql/001_schema.sql`  
+If you already imported an older schema, also import `sql/002_settings.sql`.
 
-1. Browser: http://localhost/phpmyadmin  
-2. Click **Import**  
-3. Choose file:  
-   `C:\Users\home\Projects\Amateur Radio Inventory\sql\001_schema.sql`  
-4. Click **Go**
-
-**Option B — command line**
+**Command line:**
 
 ```powershell
 cd "C:\Users\home\Projects\Amateur Radio Inventory"
 C:\xampp\mysql\bin\mysql.exe -u root < sql\001_schema.sql
+C:\xampp\mysql\bin\mysql.exe -u root < sql\002_settings.sql
 ```
 
-If MySQL has a password:
+### 4) Open the app and run first-time setup
 
-```powershell
-C:\xampp\mysql\bin\mysql.exe -u root -p < sql\001_schema.sql
-```
+1. http://localhost/arc-inventory/public/  
+2. http://localhost/arc-inventory/public/install.php  
 
-### 4) Open the app in a browser
+The installer asks for:
 
-http://localhost/arc-inventory/public/
+- Club name (shown in the app header)
+- Club website URL (e.g. https://example-arc.org)
+- App base URL (where this inventory app is hosted)
+- At least one superuser callsign + password (a second superuser is strongly recommended)
 
-You should see **Database connection: OK**.
-
-### 5) Create your first superuser
-
-http://localhost/arc-inventory/public/setup_superuser.php
-
-- Callsign: `VE1PAT` (or another)
-- Password: choose a strong one (8+ characters)
-- Submit
-
-Create a **second** superuser the same way (different callsign) so you are not a single point of failure.
-
----
-
-## Connect this folder to GitHub (run these yourself)
-
-If Git is not installed: https://git-scm.com/download/win  
-If GitHub CLI helps with login: https://cli.github.com/
-
-### A) Initialize git in the project folder
+### 5) Push to GitHub (maintainers)
 
 ```powershell
 cd "C:\Users\home\Projects\Amateur Radio Inventory"
-git status
-```
-
-If it says **not a git repository**, run:
-
-```powershell
-git init
-git branch -M main
-```
-
-### B) Add the GitHub remote
-
-```powershell
-git remote remove origin
-git remote add origin https://github.com/VE1PAT/ARC-inventory.git
-git remote -v
-```
-
-(`remote remove` may error if origin did not exist — that is fine.)
-
-### C) First commit and push
-
-```powershell
 git add .
 git status
-git commit -m "Initial PHP/MySQL scaffold for ARC Inventory"
-git push -u origin main
-```
-
-If GitHub asks you to sign in, complete the browser / token login, then run `git push -u origin main` again.
-
-If the GitHub repo already has a README commit and push is rejected:
-
-```powershell
-git pull origin main --allow-unrelated-histories
-git push -u origin main
+git commit -m "Describe your change"
+git push
 ```
 
 ---
 
-## Day-to-day workflow
+## Installing for another club
+
+1. Clone this repository onto that club’s host (or copy a release).
+2. Create a **new** MySQL/MariaDB database.
+3. Copy `config/config.example.php` → `config/config.php` with that host’s DB settings.
+4. Import `sql/001_schema.sql` (and `002_settings.sql` if needed).
+5. Point the web server document root at `public/`.
+6. Open `/install.php` and enter **that** club’s name, website, app URL, and superusers.
+7. Remove or lock `install.php` / `setup_superuser.php` on the public internet after setup.
+
+Halifax and Dartmouth (or any other clubs) each get their own database and `config.php`. They share code via this public repo.
+
+---
+
+## Day-to-day development
 
 ```powershell
 cd "C:\Users\home\Projects\Amateur Radio Inventory"
-# ... edit code, test at http://localhost/arc-inventory/public/ ...
+# edit code, test locally, then:
 git add .
 git commit -m "Describe why you changed something"
 git push
 ```
 
-Later on Linux hosting:
+On a Linux host:
 
 ```bash
 git clone https://github.com/VE1PAT/ARC-inventory.git
-# copy config.example.php -> config.php with production DB settings
-# point Apache/Nginx document root at /public
-# import sql/001_schema.sql
-# run setup_superuser.php once, then remove/protect it
+cp config/config.example.php config/config.php
+# edit config.php for production DB
+mysql -u USER -p DBNAME < sql/001_schema.sql
+# point HTTPS vhost document root to /public
+# complete /install.php once
 ```
 
 ---
@@ -173,14 +135,16 @@ git clone https://github.com/VE1PAT/ARC-inventory.git
 
 | Path | Purpose |
 |------|---------|
-| `public/` | Web root (only this should be exposed on the internet) |
-| `config/config.php` | Local secrets (not committed) |
-| `sql/001_schema.sql` | Database schema |
-| `design-spec.html` | Locked product design |
-| `storage/uploads/` | Future item photos |
+| `public/` | Web root (expose only this on the internet) |
+| `public/install.php` | First-time club setup wizard |
+| `config/config.php` | Local DB secrets (not committed) |
+| `sql/` | Database schema |
+| `design-spec.html` | Product design notes |
+| `storage/uploads/` | Item photos |
 
 ## Security notes
 
 - Never commit `config/config.php`
-- On the live site, remove or block `public/setup_superuser.php` after setup
-- Production DB should not be open to the public internet
+- After setup on a live site, remove or block `install.php` and `setup_superuser.php`
+- Keep the database off the public internet; use HTTPS on the website
+- Account lockout after 3 failed logins (Admin+ notified in-app)

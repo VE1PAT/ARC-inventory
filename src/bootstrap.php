@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 $configPath = dirname(__DIR__) . '/config/config.php';
-$examplePath = dirname(__DIR__) . '/config/config.example.php';
 
 if (!is_readable($configPath)) {
     http_response_code(500);
@@ -16,6 +15,7 @@ if (!is_readable($configPath)) {
 $config = require $configPath;
 
 require_once __DIR__ . '/Database.php';
+require_once __DIR__ . '/Settings.php';
 
 session_name($config['security']['session_name'] ?? 'arc_inventory_session');
 if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -31,4 +31,27 @@ function app_config(): array
 function db(): PDO
 {
     return Database::connection(app_config()['db']);
+}
+
+function e(?string $value): string
+{
+    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+}
+
+function club_name(): string
+{
+    try {
+        return Settings::get(db(), 'club_name', 'ARC Inventory') ?? 'ARC Inventory';
+    } catch (Throwable $e) {
+        return 'ARC Inventory';
+    }
+}
+
+function club_website(): string
+{
+    try {
+        return Settings::get(db(), 'club_website', '') ?? '';
+    } catch (Throwable $e) {
+        return '';
+    }
 }

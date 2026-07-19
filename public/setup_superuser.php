@@ -2,9 +2,9 @@
 declare(strict_types=1);
 
 /**
- * One-time / recovery helper for local and first deploy.
- * Creates or resets a superuser by callsign.
- * Remove or protect this file on the public internet after initial setup.
+ * Recovery helper: create or reset a superuser.
+ * Prefer install.php for first-time club setup.
+ * Remove or protect this file on the public internet after go-live.
  */
 require dirname(__DIR__) . '/src/bootstrap.php';
 
@@ -40,38 +40,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':h' => $hash,
                 ':r' => 'superuser',
             ]);
-            $message = 'Superuser saved for ' . htmlspecialchars($callsign, ENT_QUOTES, 'UTF-8') . '. You can log in once login is built.';
+            $message = 'Superuser saved for ' . $callsign . '.';
         } catch (Throwable $e) {
             $error = $e->getMessage();
         }
     }
 }
-
-$appName = htmlspecialchars(app_config()['app_name'] ?? 'ARC Inventory', ENT_QUOTES, 'UTF-8');
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Setup superuser · <?= $appName ?></title>
+  <title>Recovery superuser · <?= e(club_name()) ?></title>
   <link rel="stylesheet" href="assets/css/app.css">
 </head>
 <body>
   <header class="top">
     <div class="wrap">
       <h1>Create / reset superuser</h1>
-      <p><?= $appName ?></p>
+      <p><?= e(club_name()) ?></p>
     </div>
   </header>
   <main class="wrap">
     <section class="card">
-      <?php if ($message): ?><p class="ok"><?= $message ?></p><?php endif; ?>
-      <?php if ($error): ?><p class="bad"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?>
+      <?php if ($message): ?><p class="ok"><?= e($message) ?></p><?php endif; ?>
+      <?php if ($error): ?><p class="bad"><?= e($error) ?></p><?php endif; ?>
+
+      <p class="note">For a new club install, use <a href="install.php">install.php</a> instead (club name + website + superusers).</p>
 
       <form method="post" action="">
         <label for="callsign">Callsign</label>
-        <input id="callsign" name="callsign" type="text" required autocomplete="username" value="VE1PAT">
+        <input id="callsign" name="callsign" type="text" required autocomplete="username">
 
         <label for="password">Password</label>
         <input id="password" name="password" type="password" required autocomplete="new-password">
@@ -81,7 +81,6 @@ $appName = htmlspecialchars(app_config()['app_name'] ?? 'ARC Inventory', ENT_QUO
 
         <button type="submit">Save superuser</button>
       </form>
-      <p class="note">On the live site, delete or lock this page after you have at least two superusers.</p>
       <p><a class="button" href="index.php">Back to status</a></p>
     </section>
   </main>
