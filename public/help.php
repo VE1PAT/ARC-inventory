@@ -53,4 +53,16 @@ render_header($pageTitle, $currentUser);
   <h2>Need an account?</h2>
   <p>Ask a club Admin or Superuser (often the membership chair) to create your login after you are confirmed as a club member.</p>
 </section>
+
+<?php if (Auth::isAdminPlus($currentUser)): ?>
+<section class="card">
+  <h2>Admin tools</h2>
+  <ul>
+    <li><strong>Members</strong> — create logins (callsign only), set roles, deactivate, unlock.</li>
+    <li><strong>Import</strong> — download CSV template, bulk-add items (LibreOffice-friendly).</li>
+    <li><strong>Reports</strong> — on-loan list, aging, sold/disposed, and a large AGM/monthly summary.</li>
+  </ul>
+</section>
+<?php endif; ?>
 <?php render_footer(); ?>
+

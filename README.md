@@ -90,7 +90,8 @@ http://localhost/arc-inventory/public/login.php
 
 - 3 failed attempts lock the account
 - Admin+ see lockouts under **Alerts** and can unlock
-- Home is the signed-in landing page (search/loans come next)
+- Home is the signed-in landing page
+- Admin+: **Members**, **CSV Import**, **Reports** (including AGM summary)
 
 ### 6) Push to GitHub (maintainers)
 

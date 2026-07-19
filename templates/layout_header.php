@@ -51,6 +51,9 @@ if (!empty($currentUser)) {
         <a href="witness.php">Witness<?php if ($pendingWitness > 0): ?> (<?= (int) $pendingWitness ?>)<?php endif; ?></a>
         <?php if (Auth::isAdminPlus($currentUser)): ?>
           <a href="item_edit.php">Add</a>
+          <a href="import.php">Import</a>
+          <a href="members.php">Members</a>
+          <a href="reports.php">Reports</a>
           <a href="alerts.php">Alerts<?php if ($alertCount > 0): ?> (<?= (int) $alertCount ?>)<?php endif; ?></a>
         <?php endif; ?>
         <a href="help.php">Help</a>
