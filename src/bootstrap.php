@@ -16,6 +16,8 @@ $config = require $configPath;
 
 require_once __DIR__ . '/Database.php';
 require_once __DIR__ . '/Settings.php';
+require_once __DIR__ . '/Auth.php';
+require_once __DIR__ . '/helpers.php';
 
 session_name($config['security']['session_name'] ?? 'arc_inventory_session');
 if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -54,4 +56,14 @@ function club_website(): string
     } catch (Throwable $e) {
         return '';
     }
+}
+
+function render_header(string $pageTitle, ?array $currentUser = null, ?string $pageHeading = null): void
+{
+    require dirname(__DIR__) . '/templates/layout_header.php';
+}
+
+function render_footer(): void
+{
+    require dirname(__DIR__) . '/templates/layout_footer.php';
 }

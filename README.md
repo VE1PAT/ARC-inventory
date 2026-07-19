@@ -72,7 +72,7 @@ C:\xampp\mysql\bin\mysql.exe -u root < sql\002_settings.sql
 
 ### 4) Open the app and run first-time setup
 
-1. http://localhost/arc-inventory/public/  
+1. http://localhost/arc-inventory/public/ → redirects to install when needed  
 2. http://localhost/arc-inventory/public/install.php  
 
 The installer asks for:
@@ -82,7 +82,15 @@ The installer asks for:
 - App base URL (where this inventory app is hosted)
 - At least one superuser callsign + password (a second superuser is strongly recommended)
 
-### 5) Push to GitHub (maintainers)
+### 5) Log in
+
+http://localhost/arc-inventory/public/login.php
+
+- 3 failed attempts lock the account
+- Admin+ see lockouts under **Alerts** and can unlock
+- Home is the signed-in landing page (search/loans come next)
+
+### 6) Push to GitHub (maintainers)
 
 ```powershell
 cd "C:\Users\home\Projects\Amateur Radio Inventory"
