@@ -379,6 +379,12 @@ final class Loans
             throw new RuntimeException('This request is not assigned to you.');
         }
 
+        // Session user is a subset; reload full row so is_active / locked_at checks work.
+        $witness = self::findUserById($pdo, (int) $witnessUser['id']);
+        if (!$witness || !(int) $witness['is_active'] || !empty($witness['locked_at'])) {
+            throw new RuntimeException('Witness must be an active club member with a login.');
+        }
+
         $requestId = (int) $request['id'];
 
         if (!$approve) {
@@ -393,7 +399,7 @@ final class Loans
                 'witness_request_declined',
                 (int) $request['item_id'],
                 (int) $request['actor_user_id'],
-                (int) $witnessUser['id'],
+                (int) $witness['id'],
                 $request['loan_id'] !== null ? (int) $request['loan_id'] : null,
                 ['request_id' => $requestId]
             );
@@ -419,7 +425,7 @@ final class Loans
                 $item,
                 $actor,
                 $subject,
-                $witnessUser,
+                $witness,
                 false,
                 (int) $request['kit_verified'] === 1,
                 $request['notes'],
@@ -435,7 +441,7 @@ final class Loans
                 $item,
                 $actor,
                 $loan,
-                $witnessUser,
+                $witness,
                 false,
                 (int) $request['kit_verified'] === 1,
                 $request['notes'],
@@ -456,7 +462,7 @@ final class Loans
             'witness_request_approved',
             (int) $request['item_id'],
             (int) $request['actor_user_id'],
-            (int) $witnessUser['id'],
+            (int) $witness['id'],
             $loanId,
             ['request_id' => $requestId]
         );
