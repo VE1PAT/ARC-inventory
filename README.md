@@ -60,7 +60,8 @@ dir C:\xampp\htdocs\arc-inventory
 ### 3) Create the database
 
 **phpMyAdmin:** Import `sql/001_schema.sql`  
-If you already imported an older schema, also import `sql/002_settings.sql`.
+If you already imported an older schema, also import newer files in order:
+`sql/002_settings.sql`, then `sql/003_witness_subject.sql`.
 
 **Command line:**
 
@@ -68,6 +69,7 @@ If you already imported an older schema, also import `sql/002_settings.sql`.
 cd "C:\Users\home\Projects\Amateur Radio Inventory"
 C:\xampp\mysql\bin\mysql.exe -u root < sql\001_schema.sql
 C:\xampp\mysql\bin\mysql.exe -u root < sql\002_settings.sql
+C:\xampp\mysql\bin\mysql.exe -u root < sql\003_witness_subject.sql
 ```
 
 ### 4) Open the app and run first-time setup

@@ -19,13 +19,24 @@ if (!$item || !Items::visibleToUser($item, $adminView)) {
     exit;
 }
 
+Loans::expirePending($pdo);
 $borrower = Items::currentBorrower($pdo, (int) $item['id']);
 $includes = (int) $item['is_kit'] === 1 ? Items::kitIncludes($pdo, (int) $item['id']) : [];
+$pendingLoan = Loans::pendingForItem($pdo, (int) $item['id'], 'loan_out');
+$pendingReturn = Loans::pendingForItem($pdo, (int) $item['id'], 'loan_return');
 
-$canLoan = $adminView || (
-    (int) $item['not_for_loan'] === 0
+$canStartLoan = (int) $item['not_for_loan'] === 0
     && $item['status'] === 'available'
-);
+    && !$pendingLoan
+    && !Loans::childItemBlocked($pdo, (int) $item['id']);
+
+$canStartReturn = $item['status'] === 'on_loan'
+    && $borrower
+    && !$pendingReturn
+    && (
+        (int) $borrower['id'] === (int) $currentUser['id']
+        || $adminView
+    );
 
 $pageTitle = $item['public_id'];
 render_header($pageTitle, $currentUser, $item['description']);
@@ -95,14 +106,21 @@ render_header($pageTitle, $currentUser, $item['description']);
 
 <section class="card">
   <h2>Actions</h2>
-  <?php if ($canLoan && $item['status'] === 'available' && (int) $item['not_for_loan'] === 0): ?>
-    <p class="note">Loan / return with Witness will be the next build step.</p>
-    <button type="button" class="button block" disabled>Loan (coming next)</button>
-  <?php elseif ($item['status'] === 'on_loan'): ?>
-    <p class="note">Return with Witness will be the next build step.</p>
-    <button type="button" class="button block" disabled>Return (coming next)</button>
+  <?php if ($pendingLoan): ?>
+    <p class="note">A loan witness request is already pending for this item.</p>
+  <?php endif; ?>
+  <?php if ($pendingReturn): ?>
+    <p class="note">A return witness request is already pending for this item.</p>
+  <?php endif; ?>
+
+  <?php if ($canStartLoan): ?>
+    <a class="button block" href="loan.php?id=<?= (int) $item['id'] ?>">Loan</a>
   <?php elseif ((int) $item['not_for_loan'] === 1): ?>
-    <p class="note">This item is marked <strong>Not for loan</strong> (inventoried fixed / station gear).</p>
+    <p class="note">This item is marked <strong>Not for loan</strong>.</p>
+  <?php endif; ?>
+
+  <?php if ($canStartReturn): ?>
+    <a class="button block" href="return_item.php?id=<?= (int) $item['id'] ?>">Return</a>
   <?php endif; ?>
 
   <?php if ($adminView): ?>

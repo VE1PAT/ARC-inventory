@@ -9,11 +9,14 @@ if (!Settings::isInstalled($pdo)) {
 }
 
 $currentUser = Auth::requireLogin($pdo);
-$unread = Auth::isAdminPlus($currentUser) ? Auth::unreadAlertCount($pdo) : 0;
 $q = trim((string) ($_GET['q'] ?? ''));
 if ($q !== '') {
     redirect('search.php?q=' . rawurlencode($q));
 }
+
+$unread = Auth::isAdminPlus($currentUser) ? Auth::unreadAlertCount($pdo) : 0;
+$pendingWitness = Loans::pendingCountForWitness($pdo, (int) $currentUser['id']);
+$myLoanCount = count(Loans::myLoans($pdo, (int) $currentUser['id']));
 
 $pageTitle = 'Home';
 render_header($pageTitle, $currentUser, 'Home');
@@ -34,12 +37,20 @@ render_header($pageTitle, $currentUser, 'Home');
   <h2>Quick actions</h2>
   <ul class="action-list">
     <li><a class="button block" href="search.php">Search / browse</a></li>
+    <li>
+      <a class="button block" href="my_loans.php">
+        My loans<?php if ($myLoanCount > 0): ?> · <?= (int) $myLoanCount ?><?php endif; ?>
+      </a>
+    </li>
+    <li>
+      <a class="button block" href="witness.php">
+        Pending witness<?php if ($pendingWitness > 0): ?> · <?= (int) $pendingWitness ?><?php endif; ?>
+      </a>
+    </li>
     <?php if (Auth::isAdminPlus($currentUser)): ?>
       <li><a class="button block" href="item_edit.php">Add item</a></li>
       <li><a class="button block" href="alerts.php">Security alerts<?php if ($unread > 0): ?> · <?= (int) $unread ?> new<?php endif; ?></a></li>
     <?php endif; ?>
-    <li><a class="button block button-secondary" href="home.php">My loans</a> <span class="note">(next)</span></li>
-    <li><a class="button block button-secondary" href="home.php">Pending witness</a> <span class="note">(next)</span></li>
   </ul>
 </section>
 

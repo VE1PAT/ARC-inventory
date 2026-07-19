@@ -19,6 +19,7 @@ require_once __DIR__ . '/Settings.php';
 require_once __DIR__ . '/Auth.php';
 require_once __DIR__ . '/Ledger.php';
 require_once __DIR__ . '/Items.php';
+require_once __DIR__ . '/Loans.php';
 require_once __DIR__ . '/helpers.php';
 
 session_name($config['security']['session_name'] ?? 'arc_inventory_session');

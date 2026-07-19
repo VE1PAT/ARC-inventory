@@ -8,11 +8,16 @@ $club = club_name();
 $title = ($pageTitle ?? 'Home') . ' · ' . $club;
 $heading = $pageHeading ?? ($pageTitle ?? $club);
 $alertCount = 0;
-if (!empty($currentUser) && Auth::isAdminPlus($currentUser)) {
+$pendingWitness = 0;
+if (!empty($currentUser)) {
     try {
-        $alertCount = Auth::unreadAlertCount(db());
+        $pendingWitness = Loans::pendingCountForWitness(db(), (int) $currentUser['id']);
+        if (Auth::isAdminPlus($currentUser)) {
+            $alertCount = Auth::unreadAlertCount(db());
+        }
     } catch (Throwable $e) {
         $alertCount = 0;
+        $pendingWitness = 0;
     }
 }
 ?>
@@ -42,6 +47,8 @@ if (!empty($currentUser) && Auth::isAdminPlus($currentUser)) {
       <nav class="wrap nav">
         <a href="home.php">Home</a>
         <a href="search.php">Search</a>
+        <a href="my_loans.php">My loans</a>
+        <a href="witness.php">Witness<?php if ($pendingWitness > 0): ?> (<?= (int) $pendingWitness ?>)<?php endif; ?></a>
         <?php if (Auth::isAdminPlus($currentUser)): ?>
           <a href="item_edit.php">Add</a>
           <a href="alerts.php">Alerts<?php if ($alertCount > 0): ?> (<?= (int) $alertCount ?>)<?php endif; ?></a>

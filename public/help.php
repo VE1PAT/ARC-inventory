@@ -36,7 +36,17 @@ render_header($pageTitle, $currentUser);
 
 <section class="card">
   <h2>Loans and Witness</h2>
-  <p>When loan and return screens are ready, a second club member (the <strong>Witness</strong>) must confirm on the same device, or remotely in the app within 48 hours.</p>
+  <p>To loan or return an item, a second club member (the <strong>Witness</strong>) must confirm.</p>
+  <ul>
+    <li><strong>Same device (primary):</strong> witness types callsign + password on the same phone/laptop.</li>
+    <li><strong>Remote:</strong> pick a witness callsign; they approve under <strong>Witness</strong> within 48 hours.</li>
+  </ul>
+  <p>Witness cannot be the borrower/returner. Kits require checking every include line plus the confirmation checkbox.</p>
+</section>
+
+<section class="card">
+  <h2>Admin override</h2>
+  <p>Admins and Superusers may complete a loan/return without a witness when needed. That override is written to the ledger.</p>
 </section>
 
 <section class="card">
