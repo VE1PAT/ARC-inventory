@@ -58,7 +58,15 @@ render_header($pageTitle, null, 'Log in');
 
     <button type="submit">Log in</button>
   </form>
+</section>
 
-  <p class="note">Accounts are created by club admins. There is no public sign-up.</p>
+<section class="card">
+  <h2>Need an account?</h2>
+  <p>
+    There is no public sign-up. Ask a club Admin or Superuser
+    (often the membership chair) to create your login after you are a confirmed member.
+  </p>
+  <p><a href="help.php">More about getting access</a></p>
 </section>
 <?php render_footer(); ?>
+

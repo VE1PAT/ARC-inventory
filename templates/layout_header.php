@@ -43,8 +43,8 @@ if (!empty($currentUser)) {
         </div>
       <?php endif; ?>
     </div>
-    <?php if (!empty($currentUser)): ?>
-      <nav class="wrap nav">
+    <nav class="wrap nav">
+      <?php if (!empty($currentUser)): ?>
         <a href="home.php">Home</a>
         <a href="search.php">Search</a>
         <a href="my_loans.php">My loans</a>
@@ -59,7 +59,10 @@ if (!empty($currentUser)) {
         <?php endif; ?>
         <a href="help.php">Help</a>
         <a href="logout.php">Log out</a>
-      </nav>
-    <?php endif; ?>
+      <?php else: ?>
+        <a href="login.php">Log in</a>
+        <a href="help.php">Help</a>
+      <?php endif; ?>
+    </nav>
   </header>
   <main class="wrap">

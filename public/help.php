@@ -4,11 +4,39 @@ declare(strict_types=1);
 require dirname(__DIR__) . '/src/bootstrap.php';
 
 $pdo = db();
-$currentUser = Auth::requireLogin($pdo);
+$currentUser = Auth::check($pdo);
+$guest = $currentUser === null;
 
 $pageTitle = 'Help';
-render_header($pageTitle, $currentUser);
+$pageHeading = $guest ? 'How to get access' : 'Help';
+render_header($pageTitle, $currentUser, $pageHeading);
 ?>
+
+<?php if ($guest): ?>
+<section class="card">
+  <h2>Need an account?</h2>
+  <p>
+    Ask a club <strong>Admin</strong> or <strong>Superuser</strong>
+    (often the membership chair) to create your login after you are confirmed as a club member.
+  </p>
+  <p>There is <strong>no public sign-up</strong>. Only callsign and password are stored here — not your personal membership details.</p>
+  <p><a class="button" href="login.php">Back to log in</a></p>
+</section>
+
+<section class="card">
+  <h2>Logging in</h2>
+  <p>Use your club callsign and the password an admin set for you.</p>
+</section>
+
+<section class="card">
+  <h2>Locked account</h2>
+  <p>
+    After 3 failed login attempts your account locks.
+    Contact a club Admin or Superuser to unlock it.
+  </p>
+</section>
+<?php else: ?>
+
 <section class="card">
   <h2>Logging in</h2>
   <p>Use your club callsign and the password an admin set for you. Accounts are not created by self sign-up.</p>
@@ -65,5 +93,6 @@ render_header($pageTitle, $currentUser);
   </ul>
 </section>
 <?php endif; ?>
-<?php render_footer(); ?>
 
+<?php endif; ?>
+<?php render_footer(); ?>
