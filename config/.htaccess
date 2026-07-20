@@ -1,5 +1,5 @@
 # Deny direct web access to non-public project folders.
-# Used when the whole repo sits under public_html (same pattern as /radio-nets/).
+# Used when the whole repo sits under the site web root (e.g. public_html).
 <IfModule mod_authz_core.c>
   Require all denied
 </IfModule>
