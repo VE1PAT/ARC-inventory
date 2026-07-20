@@ -7,7 +7,8 @@ Track club assets (radios, kits, books, station gear, and more), loan items to m
 Each club runs **its own install** (own database and config). The same codebase can power multiple clubs — for example one instance for Halifax and another for Dartmouth.
 
 **Repository:** https://github.com/VE1PAT/ARC-inventory  
-**Design notes:** open `design-spec.html` in a browser.
+**Design notes:** open `design-spec.html` in a browser.  
+**Production deploy:** see [DEPLOY.md](DEPLOY.md) (Halifax / Linux hosting).
 
 ## Features (target)
 

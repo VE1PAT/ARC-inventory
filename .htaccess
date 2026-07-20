@@ -1,0 +1,5 @@
+# Project root — if this folder is web-visible, block sensitive paths.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^(config|src|sql|storage|templates|vendor)(/|$) - [F,L]
+</IfModule>

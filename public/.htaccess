@@ -1,0 +1,11 @@
+# Web root for ARC Inventory
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+</IfModule>
+
+# Block script execution inside uploads (photos only)
+<IfModule mod_rewrite.c>
+  RewriteRule ^uploads/.*\.(?i:php|phtml|php3|php4|php5|phar)$ - [F,L]
+</IfModule>
