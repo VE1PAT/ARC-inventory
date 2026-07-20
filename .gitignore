@@ -10,6 +10,7 @@
 !/storage/logs/.gitkeep
 /public/uploads/*
 !/public/uploads/.gitkeep
+!/public/uploads/.htaccess
 
 # OS / editor
 Thumbs.db
