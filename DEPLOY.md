@@ -3,6 +3,9 @@
 This guide assumes you have **never deployed a PHP + MySQL app** before.  
 Take it one step at a time. You do **not** need to finish in one sitting.
 
+**Privacy:** Put real database names, usernames, and passwords only in `config.php` **on the server**.  
+Do **not** commit those to GitHub. Club domain examples below are placeholders you replace locally.
+
 **Radio Nets note:** that app stores data in **JSON files**.  
 **Inventory is different:** it needs a **MySQL / MariaDB database** on the host.  
 Your hosting almost certainly already has MySQL available (most club sites do); we just have to create a database and point the app at it.
@@ -11,9 +14,9 @@ Your hosting almost certainly already has MySQL available (most club sites do); 
 
 ## What you will end up with
 
-| Piece | Example |
+| Piece | Example (you substitute your real values) |
 |--------|---------|
-| App URL | `https://www.halifax-arc.org/inventory/public/` |
+| App URL | `https://www.YOUR-CLUB-SITE.org/inventory/public/` |
 | Code folder on server | same area as `radio-nets`, named `inventory` |
 | Database | a MySQL database (separate from Radio Nets — Nets does not use MySQL) |
 
@@ -21,10 +24,28 @@ Local XAMPP on your laptop stays for development. Live site is a **copy** of the
 
 ---
 
+## Download the code from GitHub (no Release required)
+
+You do **not** need to create a GitHub Release to get a ZIP.
+
+1. Open: https://github.com/VE1PAT/ARC-inventory  
+2. Click the green **Code** button (near the top of the page, above the file list).  
+3. Click **Download ZIP**.  
+4. Save and unzip on your laptop.
+
+That ZIP is the current `main` branch — enough for deploy.
+
+(A **Release** is optional later if you want a named version like `v1.0` for other clubs. Skip it for now.)
+
+**MySQL users tip:** the app only needs **one** database user in `config.php`.  
+If the cPanel wizard created two users, pick **one**, make sure it has **ALL PRIVILEGES** on the inventory database, and use that user’s name/password in `config.php`. You can leave or delete the extra user later.
+
+---
+
 ## What you need before starting
 
 1. Login to your **website hosting control panel** (often called cPanel, Plesk, or “Hosting Dashboard”).  
-   This is whatever you use to manage `halifax-arc.org` files — the same place you uploaded Radio Nets.
+   This is whatever you use to manage `YOUR-CLUB-SITE.org` files — the same place you uploaded Radio Nets.
 2. Ability to:
    - Browse/upload files (File Manager or FTP)
    - Create a MySQL database (look for “MySQL Databases”, “MariaDB”, or “Databases”)
@@ -211,7 +232,7 @@ return [
     'app_name' => 'ARC Inventory',
 
     // Exact public URL of the app (no trailing slash required; either is fine)
-    'base_url' => 'https://www.halifax-arc.org/inventory/public',
+    'base_url' => 'https://www.YOUR-CLUB-SITE.org/inventory/public',
 
     'db' => [
         'host' => 'localhost',
@@ -316,7 +337,7 @@ In File Manager:
 
 In your browser go to:
 
-https://www.halifax-arc.org/inventory/public/
+https://www.YOUR-CLUB-SITE.org/inventory/public/
 
 (Adjust if your folder name or domain spelling differs.)
 
@@ -330,15 +351,15 @@ What you might see:
 
 Open:
 
-https://www.halifax-arc.org/inventory/public/install.php
+https://www.YOUR-CLUB-SITE.org/inventory/public/install.php
 
 Fill in:
 
 | Field | Example |
 |--------|---------|
 | Club name | Halifax Amateur Radio Club |
-| Club website | https://www.halifax-arc.org |
-| Inventory app base URL | https://www.halifax-arc.org/inventory/public |
+| Club website | https://www.YOUR-CLUB-SITE.org |
+| Inventory app base URL | https://www.YOUR-CLUB-SITE.org/inventory/public |
 | Superuser 1 callsign + password | your callsign + strong password |
 | Superuser 2 callsign + password | a second trusted member (important!) |
 
@@ -346,7 +367,7 @@ Submit.
 
 ### 6.3 Log in
 
-https://www.halifax-arc.org/inventory/public/login.php
+https://www.YOUR-CLUB-SITE.org/inventory/public/login.php
 
 Use a superuser callsign and password.
 
@@ -375,8 +396,8 @@ Only rename them back temporarily if you need recovery, then rename off again.
 
 In the browser, these should **NOT** show your secrets (expect Forbidden / 404 / blank error — not readable PHP source or passwords):
 
-- https://www.halifax-arc.org/inventory/config/config.php  
-- https://www.halifax-arc.org/inventory/sql/001_schema.sql  
+- https://www.YOUR-CLUB-SITE.org/inventory/config/config.php  
+- https://www.YOUR-CLUB-SITE.org/inventory/sql/001_schema.sql  
 
 If `config.php` downloads or displays, stop and tell me — we will tighten hosting path / permissions.
 
@@ -419,7 +440,7 @@ For backups later: once a month (or before big changes), in phpMyAdmin use **Exp
 
 ## When you are “done”
 
-- [ ] https://www.halifax-arc.org/inventory/public/login.php works on your phone and laptop  
+- [ ] https://www.YOUR-CLUB-SITE.org/inventory/public/login.php works on your phone and laptop  
 - [ ] Two superusers can log in  
 - [ ] You can add and search an item  
 - [ ] `install.php` is renamed to `.off`  
