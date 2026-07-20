@@ -108,7 +108,7 @@ If you want easier updates: install Git in cPanel / SSH once, then `git pull` in
 ## Out of scope (this change)
 
 - Email “forgot password” reset (no member email stored by design)  
-- SSO / shared login with Radio Nets (still deferred)  
+- Cross-app single sign-on with other club websites (possible later; not part of this feature)  
 
 Admin can always reset a password in **Members** if someone forgets.
 
