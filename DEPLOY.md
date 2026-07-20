@@ -401,6 +401,48 @@ If `config.php` downloads or displays, stop and tell me — we will tighten host
 
 ---
 
+## Updating the live site after a new GitHub change
+
+Use this whenever features are added (for example password change).
+
+### 1) On your laptop
+
+- Confirm the change is on GitHub (`git push` already done by the maintainer).
+- Optionally test on XAMPP first.
+
+### 2) Database migrations (only when a new `sql/00x_….sql` file exists)
+
+1. phpMyAdmin → click **your inventory database** on the left.  
+2. **Import** → choose the new file from your laptop, e.g. `sql/004_must_change_password.sql`.  
+3. **Go** → success.
+
+If there is no new SQL file for that update, skip this step.
+
+### 3) Update code files (ZIP method)
+
+1. GitHub → green **Code** → **Download ZIP**.  
+2. Unzip on your laptop.  
+3. In cPanel File Manager, open `inventory/`.  
+4. Upload/overwrite these folders/files from the ZIP (merge into existing folders):
+   - `public/` (all PHP pages, `assets/`, etc.)
+   - `src/`
+   - `templates/`
+   - `sql/` (so future imports are handy)
+   - `DEPLOY.md` / `README.md` optional  
+5. **Do not overwrite:**
+   - `config/config.php`
+   - anything inside `public/uploads/` (member photos)
+
+Tip: upload the changed folders as zips and extract in File Manager if that is easier, or replace file-by-file using the exact list in the chat notes for that release.
+
+### 4) Smoke-test on HTTPS
+
+- Log in as a normal member  
+- Confirm the new feature works  
+- Confirm photos and existing items still appear  
+
+---
+
 ## How this differs from Radio Nets
 
 | | Radio Nets | Inventory |

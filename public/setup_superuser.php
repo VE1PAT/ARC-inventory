@@ -40,14 +40,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         try {
             $hash = password_hash($password, PASSWORD_DEFAULT);
-            $sql = 'INSERT INTO users (callsign, password_hash, role, is_active, failed_login_count, locked_at)
-                    VALUES (:c, :h, :r, 1, 0, NULL)
+            $sql = 'INSERT INTO users (callsign, password_hash, role, is_active, failed_login_count, locked_at, must_change_password)
+                    VALUES (:c, :h, :r, 1, 0, NULL, 0)
                     ON DUPLICATE KEY UPDATE
                       password_hash = VALUES(password_hash),
                       role = VALUES(role),
                       is_active = 1,
                       failed_login_count = 0,
-                      locked_at = NULL';
+                      locked_at = NULL,
+                      must_change_password = 0';
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 ':c' => $callsign,

@@ -43,6 +43,7 @@ final class Ledger
             'witness_request_declined' => 'Witness request declined',
             'user_created' => 'User created',
             'user_updated' => 'User updated',
+            'password_changed' => 'Password changed',
             'csv_import' => 'CSV import',
             default => $eventType,
         };

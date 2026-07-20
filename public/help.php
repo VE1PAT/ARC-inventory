@@ -43,6 +43,12 @@ render_header($pageTitle, $currentUser, $pageHeading);
 </section>
 
 <section class="card">
+  <h2>Passwords</h2>
+  <p>If an admin gave you a temporary password, you must set your own password on first login before using the app.</p>
+  <p>Anytime after that, use <strong>Password</strong> in the menu to change it. If you forget it, ask an Admin to reset it (you will be asked to change it again on next login).</p>
+</section>
+
+<section class="card">
   <h2>Locked account</h2>
   <p>After 3 failed login attempts your account locks. An Admin or Superuser is notified in <strong>Alerts</strong> and can unlock you.</p>
 </section>

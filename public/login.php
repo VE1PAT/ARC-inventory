@@ -29,6 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $result = Auth::attempt($pdo, $callsign, $password);
         if ($result['ok']) {
+            if (!empty($result['user']['must_change_password'])) {
+                redirect('password.php');
+            }
             redirect('home.php');
         }
         $error = (string) $result['error'];

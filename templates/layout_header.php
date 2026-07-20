@@ -45,20 +45,26 @@ if (!empty($currentUser)) {
     </div>
     <nav class="wrap nav">
       <?php if (!empty($currentUser)): ?>
-        <a href="home.php">Home</a>
-        <a href="search.php">Search</a>
-        <a href="my_loans.php">My loans</a>
-        <a href="witness.php">Witness<?php if ($pendingWitness > 0): ?> (<?= (int) $pendingWitness ?>)<?php endif; ?></a>
-        <?php if (Auth::isAdminPlus($currentUser)): ?>
-          <a href="item_edit.php">Add</a>
-          <a href="import.php">Import</a>
-          <a href="members.php">Members</a>
-          <a href="reports.php">Reports</a>
-          <a href="ledger.php">Ledger</a>
-          <a href="alerts.php">Alerts<?php if ($alertCount > 0): ?> (<?= (int) $alertCount ?>)<?php endif; ?></a>
+        <?php if (!empty($currentUser['must_change_password'])): ?>
+          <a href="password.php">Password</a>
+          <a href="logout.php">Log out</a>
+        <?php else: ?>
+          <a href="home.php">Home</a>
+          <a href="search.php">Search</a>
+          <a href="my_loans.php">My loans</a>
+          <a href="witness.php">Witness<?php if ($pendingWitness > 0): ?> (<?= (int) $pendingWitness ?>)<?php endif; ?></a>
+          <?php if (Auth::isAdminPlus($currentUser)): ?>
+            <a href="item_edit.php">Add</a>
+            <a href="import.php">Import</a>
+            <a href="members.php">Members</a>
+            <a href="reports.php">Reports</a>
+            <a href="ledger.php">Ledger</a>
+            <a href="alerts.php">Alerts<?php if ($alertCount > 0): ?> (<?= (int) $alertCount ?>)<?php endif; ?></a>
+          <?php endif; ?>
+          <a href="password.php">Password</a>
+          <a href="help.php">Help</a>
+          <a href="logout.php">Log out</a>
         <?php endif; ?>
-        <a href="help.php">Help</a>
-        <a href="logout.php">Log out</a>
       <?php else: ?>
         <a href="login.php">Log in</a>
         <a href="help.php">Help</a>

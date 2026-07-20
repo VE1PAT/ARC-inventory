@@ -87,14 +87,15 @@ if ($dbOk && $canEdit && $_SERVER['REQUEST_METHOD'] === 'POST') {
             Settings::set($pdo, 'setup_completed_at', gmdate('c'));
 
             $upsert = $pdo->prepare(
-                'INSERT INTO users (callsign, password_hash, role, is_active, failed_login_count, locked_at)
-                 VALUES (:c, :h, :r, 1, 0, NULL)
+                'INSERT INTO users (callsign, password_hash, role, is_active, failed_login_count, locked_at, must_change_password)
+                 VALUES (:c, :h, :r, 1, 0, NULL, 0)
                  ON DUPLICATE KEY UPDATE
                    password_hash = VALUES(password_hash),
                    role = VALUES(role),
                    is_active = 1,
                    failed_login_count = 0,
-                   locked_at = NULL'
+                   locked_at = NULL,
+                   must_change_password = 0'
             );
 
             if ($c1 !== '' && $p1 !== '') {

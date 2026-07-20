@@ -6,7 +6,8 @@ final class Users
     public static function all(PDO $pdo): array
     {
         return $pdo->query(
-            'SELECT id, callsign, role, is_active, failed_login_count, locked_at, created_at, updated_at
+            'SELECT id, callsign, role, is_active, failed_login_count, locked_at, must_change_password,
+                    created_at, updated_at
              FROM users
              ORDER BY callsign ASC'
         )->fetchAll();
@@ -15,7 +16,8 @@ final class Users
     public static function find(PDO $pdo, int $id): ?array
     {
         $stmt = $pdo->prepare(
-            'SELECT id, callsign, role, is_active, failed_login_count, locked_at, created_at, updated_at
+            'SELECT id, callsign, role, is_active, failed_login_count, locked_at, must_change_password,
+                    created_at, updated_at
              FROM users WHERE id = :id LIMIT 1'
         );
         $stmt->execute([':id' => $id]);
@@ -38,7 +40,8 @@ final class Users
         string $callsign,
         string $password,
         string $role,
-        bool $isActive = true
+        bool $isActive = true,
+        bool $mustChangePassword = true
     ): int {
         $callsign = strtoupper(trim($callsign));
         $role = self::normalizeRole($role);
@@ -49,8 +52,9 @@ final class Users
         }
 
         $stmt = $pdo->prepare(
-            'INSERT INTO users (callsign, password_hash, role, is_active, failed_login_count, locked_at)
-             VALUES (:c, :h, :r, :a, 0, NULL)'
+            'INSERT INTO users (
+                callsign, password_hash, role, is_active, failed_login_count, locked_at, must_change_password
+             ) VALUES (:c, :h, :r, :a, 0, NULL, :m)'
         );
         try {
             $stmt->execute([
@@ -58,6 +62,7 @@ final class Users
                 ':h' => password_hash($password, PASSWORD_DEFAULT),
                 ':r' => $role,
                 ':a' => $isActive ? 1 : 0,
+                ':m' => $mustChangePassword ? 1 : 0,
             ]);
         } catch (PDOException $e) {
             if (str_contains($e->getMessage(), 'Duplicate')) {
@@ -71,6 +76,7 @@ final class Users
             'callsign' => $callsign,
             'role' => $role,
             'is_active' => $isActive,
+            'must_change_password' => $mustChangePassword,
         ]);
         return $id;
     }
@@ -106,12 +112,14 @@ final class Users
             ':id' => $target['id'],
         ];
 
+        $passwordReset = false;
         if ($newPassword !== null && $newPassword !== '') {
             if (strlen($newPassword) < 8) {
                 throw new RuntimeException('Password must be at least 8 characters.');
             }
-            $sql .= ', password_hash = :h, failed_login_count = 0, locked_at = NULL';
+            $sql .= ', password_hash = :h, failed_login_count = 0, locked_at = NULL, must_change_password = 1';
             $params[':h'] = password_hash($newPassword, PASSWORD_DEFAULT);
+            $passwordReset = true;
         }
 
         $sql .= ' WHERE id = :id';
@@ -123,8 +131,65 @@ final class Users
             'changes' => [
                 'role' => ['from' => $target['role'], 'to' => $role],
                 'is_active' => ['from' => (int) $target['is_active'], 'to' => $isActive ? 1 : 0],
-                'password_reset' => $newPassword !== null && $newPassword !== '',
+                'password_reset' => $passwordReset,
             ],
+        ]);
+    }
+
+    public static function changeOwnPassword(
+        PDO $pdo,
+        array $user,
+        string $currentPassword,
+        string $newPassword,
+        string $confirmPassword
+    ): void {
+        if ($newPassword !== $confirmPassword) {
+            throw new RuntimeException('New password and confirmation do not match.');
+        }
+        if (strlen($newPassword) < 8) {
+            throw new RuntimeException('New password must be at least 8 characters.');
+        }
+
+        $stmt = $pdo->prepare('SELECT password_hash, must_change_password FROM users WHERE id = :id LIMIT 1');
+        $stmt->execute([':id' => $user['id']]);
+        $row = $stmt->fetch();
+        if (!$row) {
+            throw new RuntimeException('User not found.');
+        }
+
+        $forced = (int) ($row['must_change_password'] ?? 0) === 1
+            || !empty($user['must_change_password']);
+
+        // When forced (first login / admin reset), current password was already proven at login.
+        // Still require it when the user is changing voluntarily.
+        if (!$forced) {
+            if ($currentPassword === '' || !password_verify($currentPassword, $row['password_hash'])) {
+                throw new RuntimeException('Current password is incorrect.');
+            }
+        } elseif ($currentPassword !== '' && !password_verify($currentPassword, $row['password_hash'])) {
+            // If they typed current anyway, validate it.
+            throw new RuntimeException('Current password is incorrect.');
+        }
+
+        if (password_verify($newPassword, $row['password_hash'])) {
+            throw new RuntimeException('New password must be different from the current password.');
+        }
+
+        $upd = $pdo->prepare(
+            'UPDATE users
+             SET password_hash = :h, must_change_password = 0, failed_login_count = 0, locked_at = NULL
+             WHERE id = :id'
+        );
+        $upd->execute([
+            ':h' => password_hash($newPassword, PASSWORD_DEFAULT),
+            ':id' => $user['id'],
+        ]);
+
+        $_SESSION['must_change_password'] = false;
+
+        Ledger::write($pdo, 'password_changed', null, (int) $user['id'], null, null, [
+            'callsign' => $user['callsign'],
+            'was_forced' => $forced,
         ]);
     }
 

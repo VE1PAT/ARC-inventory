@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 (string) ($_POST['role'] ?? 'member'),
                 !empty($_POST['is_active'])
             );
-            $message = 'Member created.';
+            $message = 'Member created. They must change the temporary password on first login.';
         }
 
         if ($action === 'update') {
@@ -44,7 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 !empty($_POST['is_active']),
                 $pass !== '' ? $pass : null
             );
-            $message = 'Member updated.';
+            $message = $pass !== ''
+                ? 'Member updated. They must change the reset password on next login.'
+                : 'Member updated.';
             $editUser = null;
             $editId = 0;
         }
@@ -84,6 +86,7 @@ render_header($pageTitle, $currentUser);
     <p class="bad">Warning: fewer than 2 active superusers. Add another to avoid a single point of failure.</p>
   <?php endif; ?>
   <p class="note">No personal membership data is stored here — callsign, role, and login only.</p>
+  <p class="note">Temporary passwords you set here must be changed by the member on first login (or after an admin reset).</p>
 </section>
 
 <section class="card">

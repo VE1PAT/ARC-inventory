@@ -73,6 +73,7 @@ final class Auth
         $_SESSION['user_id'] = (int) $user['id'];
         $_SESSION['callsign'] = (string) $user['callsign'];
         $_SESSION['role'] = (string) $user['role'];
+        $_SESSION['must_change_password'] = (int) ($user['must_change_password'] ?? 0) === 1;
     }
 
     public static function logout(): void
@@ -92,7 +93,7 @@ final class Auth
         }
 
         $stmt = $pdo->prepare(
-            'SELECT id, callsign, role, is_active, locked_at
+            'SELECT id, callsign, role, is_active, locked_at, must_change_password
              FROM users WHERE id = :id LIMIT 1'
         );
         $stmt->execute([':id' => (int) $_SESSION['user_id']]);
@@ -105,14 +106,18 @@ final class Auth
 
         $_SESSION['callsign'] = (string) $user['callsign'];
         $_SESSION['role'] = (string) $user['role'];
+        $_SESSION['must_change_password'] = (int) ($user['must_change_password'] ?? 0) === 1;
         return self::publicUser($user);
     }
 
-    public static function requireLogin(PDO $pdo): array
+    public static function requireLogin(PDO $pdo, bool $allowPasswordPage = false): array
     {
         $user = self::check($pdo);
         if ($user === null) {
             redirect('login.php');
+        }
+        if (!empty($user['must_change_password']) && !$allowPasswordPage) {
+            redirect('password.php');
         }
         return $user;
     }
@@ -161,13 +166,14 @@ final class Auth
         )->fetchColumn();
     }
 
-    /** @return array{id:int,callsign:string,role:string} */
+    /** @return array{id:int,callsign:string,role:string,must_change_password:bool} */
     private static function publicUser(array $user): array
     {
         return [
             'id' => (int) $user['id'],
             'callsign' => (string) $user['callsign'],
             'role' => (string) $user['role'],
+            'must_change_password' => (int) ($user['must_change_password'] ?? 0) === 1,
         ];
     }
 }
