@@ -1,11 +1,7 @@
 -- ARC Inventory — initial schema (MariaDB / MySQL)
--- Run this once in phpMyAdmin or: mysql -u root < sql/001_schema.sql
-
-CREATE DATABASE IF NOT EXISTS arc_inventory
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
-
-USE arc_inventory;
+-- Import into an EXISTING database (cPanel/shared hosting already created it).
+-- In phpMyAdmin: select your database on the left, then Import this file.
+-- Do not rely on CREATE DATABASE — many hosts deny that privilege.
 
 -- Roles: member | admin | superuser
 CREATE TABLE IF NOT EXISTS users (

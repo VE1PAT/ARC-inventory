@@ -276,30 +276,28 @@ In the left sidebar, click the database you created in Stage 1
 
 ### 4.3 Import the schema file
 
-1. Click the **Import** tab.  
-2. Choose file: from your laptop, pick  
-   `…/Amateur Radio Inventory/sql/001_schema.sql`  
-   (or the copy already on the server under `inventory/sql/001_schema.sql` if the panel lets you browse server files).  
-3. Click **Go**.
+**Important:** use the latest `001_schema.sql` from GitHub (it no longer tries to create a database named `arc_inventory`).  
+If you still have an old ZIP, either re-download, or delete any `CREATE DATABASE` / `USE …` lines at the top of the file before importing.
 
-### 4.4 If import complains about database name
+1. In the **left sidebar**, click **your** database first (the one you created in cPanel).  
+2. Click the **Import** tab.  
+3. **Choose file** from your laptop: `sql/001_schema.sql`  
+   (C: drive / local file is normal — many hosts do not offer “load from server directory”.)  
+4. Click **Go**.
 
-At the top of `001_schema.sql` there are lines like:
+You should see a success message and then tables listed under your database.
 
-```sql
-CREATE DATABASE IF NOT EXISTS arc_inventory ...
-USE arc_inventory;
-```
+### 4.4 If you still get “Access denied … to database arc_inventory”
 
-Your host DB name may be different (e.g. `halifax_arc_inventory`).
+That means the SQL file is still the **old** version that tries to create `arc_inventory`.
 
-**Fix A (simplest):**
+1. Open `001_schema.sql` in Notepad.  
+2. Delete any lines that say `CREATE DATABASE …` or `USE …`.  
+3. Save.  
+4. In phpMyAdmin, select **your** database on the left again.  
+5. Import the edited file.
 
-1. Download/edit a copy of `001_schema.sql` on your laptop.  
-2. Change both `arc_inventory` mentions to your **exact** DB name.  
-3. Or delete the `CREATE DATABASE` and `USE` lines entirely, then import while your DB is selected in phpMyAdmin.
-
-**Fix B:** ask hosting support “how do I import a SQL file into my MySQL database?” — they see this daily.
+(Or download a fresh ZIP / pull latest from GitHub — current `001_schema.sql` is already fixed.)
 
 ### 4.5 Confirm it worked
 
@@ -431,7 +429,8 @@ For backups later: once a month (or before big changes), in phpMyAdmin use **Exp
 - Check Errors / Error Log in the hosting panel  
 
 ### Import SQL failed
-- Fix/remove `CREATE DATABASE` / `USE arc_inventory` lines (Stage 4.4)  
+- Select your cPanel database on the left **before** Import  
+- Use the latest `001_schema.sql` (no `CREATE DATABASE` / `USE` lines)  
 
 ### Photos will not upload
 - `public/uploads` not writable  

@@ -1,9 +1,11 @@
 -- Borrower/returner subject on remote witness requests (for existing installs)
-USE arc_inventory;
+-- Select your database in phpMyAdmin first, then import.
+
+SET @db := DATABASE();
 
 SET @col_exists := (
   SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
-  WHERE TABLE_SCHEMA = 'arc_inventory'
+  WHERE TABLE_SCHEMA = @db
     AND TABLE_NAME = 'witness_requests'
     AND COLUMN_NAME = 'subject_user_id'
 );
